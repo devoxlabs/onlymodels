@@ -36,6 +36,15 @@ export function HeroVisuals() {
     const payoutCardX = useTransform(x, [-300, 300], [-14, 14]);
     const payoutCardY = useTransform(y, [-300, 300], [-18, 18]);
 
+    const connectorOneX = useTransform(x, [-300, 300], [-6, 6]);
+    const connectorOneY = useTransform(y, [-300, 300], [-4, 4]);
+    const connectorTwoX = useTransform(x, [-300, 300], [-5, 5]);
+    const connectorTwoY = useTransform(y, [-300, 300], [-5, 5]);
+    const connectorThreeX = useTransform(x, [-300, 300], [-4, 4]);
+    const connectorThreeY = useTransform(y, [-300, 300], [-4, 4]);
+    const connectorFourX = useTransform(x, [-300, 300], [-5, 5]);
+    const connectorFourY = useTransform(y, [-300, 300], [-3, 3]);
+
     const rotateXSpring = useSpring(useTransform(y, [-300, 300], [5, -5]), springConfig);
     const rotateYSpring = useSpring(useTransform(x, [-300, 300], [-5, 5]), springConfig);
 
@@ -61,6 +70,66 @@ export function HeroVisuals() {
             className="hidden md:block relative h-[500px] w-full max-w-[600px] md:mx-auto xl:mx-0 origin-center scale-[0.65] sm:scale-75 md:h-[600px] md:scale-100"
             style={{ perspective: "1200px" }}
         >
+            {/* Pink connector lines */}
+            <div className="pointer-events-none absolute inset-0 z-10">
+                <motion.span
+                    className="absolute block h-[2px] border-t-2 border-dashed border-[#ff4da6]/50"
+                    style={{
+                        width: "200px",
+                        left: "45%",
+                        top: "21%",
+                        rotate: "15deg",
+                        x: connectorOneX,
+                        y: connectorOneY,
+                    }}
+                    initial={{ opacity: 0, scaleX: 0.7 }}
+                    animate={{ opacity: 1, scaleX: 1 }}
+                    transition={{ delay: 0.3, duration: 0.6, ease: "easeOut" }}
+                />
+                <motion.span
+                    className="absolute block h-[2px] border-t-2 border-dashed border-[#ff4da6]/50"
+                    style={{
+                        width: "280px",
+                        left: "3%",
+                        top: "21%",
+                        rotate: "-10deg",
+                        x: connectorTwoX,
+                        y: connectorTwoY,
+                    }}
+                    initial={{ opacity: 0, scaleX: 0.7 }}
+                    animate={{ opacity: 1, scaleX: 1 }}
+                    transition={{ delay: 0.4, duration: 0.6, ease: "easeOut" }}
+                />
+                <motion.span
+                    className="absolute block h-[2px] border-t-2 border-dashed border-[#ff4da6]/45"
+                    style={{
+                        width: "210px",
+                        right: "76%",
+                        top: "64%",
+                        rotate: "90deg",
+                        x: connectorThreeX,
+                        y: connectorThreeY,
+                    }}
+                    initial={{ opacity: 0, scaleY: 0.6 }}
+                    animate={{ opacity: 1, scaleY: 1 }}
+                    transition={{ delay: 0.5, duration: 0.6, ease: "easeOut" }}
+                />
+                <motion.span
+                    className="absolute block h-[2px] border-t-2 border-dashed border-[#ff4da6]/50"
+                    style={{
+                        width: "340px",
+                        left: "17%",
+                        top: "73%",
+                        rotate: "-10deg",
+                        x: connectorFourX,
+                        y: connectorFourY,
+                    }}
+                    initial={{ opacity: 0, scaleX: 0.7 }}
+                    animate={{ opacity: 1, scaleX: 1 }}
+                    transition={{ delay: 0.6, duration: 0.6, ease: "easeOut" }}
+                />
+            </div>
+
             {/* Central creator photo */}
             <motion.div
                 className="absolute left-4 top-45 z-30 -translate-x-1/2 -translate-y-1/2 will-change-transform"
