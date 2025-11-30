@@ -4,29 +4,29 @@ import Lenis from "lenis";
 import { useEffect } from "react";
 
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
-    useEffect(() => {
-        const lenis = new Lenis({
-            duration: 1,
-            easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-            orientation: "vertical",
-            gestureOrientation: "vertical",
-            smoothWheel: true,
-            wheelMultiplier: 1.2,
-            touchMultiplier: 2,
-            infinite: false,
-        });
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.1,
+      lerp: 0.1,
+      smoothWheel: true,
+      smoothTouch: false,
+      touchMultiplier: 1.6,
+      wheelMultiplier: 1,
+    });
 
-        function raf(time: number) {
-            lenis.raf(time);
-            requestAnimationFrame(raf);
-        }
+    let frame: number;
+    const raf = (time: number) => {
+      lenis.raf(time);
+      frame = requestAnimationFrame(raf);
+    };
 
-        requestAnimationFrame(raf);
+    frame = requestAnimationFrame(raf);
 
-        return () => {
-            lenis.destroy();
-        };
-    }, []);
+    return () => {
+      cancelAnimationFrame(frame);
+      lenis.destroy();
+    };
+  }, []);
 
-    return <>{children}</>;
+  return <>{children}</>;
 }

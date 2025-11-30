@@ -1,82 +1,48 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import { motion, useAnimation, useInView } from "framer-motion";
-import {
-  CheckCircle2,
-  ChevronLeft,
-  ChevronRight,
-  Quote,
-  Star,
-  TrendingUp,
-} from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { motion, useAnimation, useInView, useInView as useFramerInView } from "framer-motion";
+import { CheckCircle2, Play, Star, TrendingUp } from "lucide-react";
 
-type Testimonial = {
-  quote: string;
-  name: string;
+type VideoTestimonial = {
+  creator: string;
   role: string;
-  metric: string;
-  image: string;
+  stat: string;
+  quote: string;
+  embedUrl: string;
+  aspectPadding: string;
+  length: string;
 };
 
-const testimonials: Testimonial[] = [
+const videoTestimonials: VideoTestimonial[] = [
   {
-    quote:
-      "I was stuck at $5k/mo for months. OnlyModels optimized my chat scripts and now I'm hitting $25k consistently. The freedom is real.",
-    name: "Sarah J.",
+    creator: "Lena F.",
     role: "Top 0.5% Creator",
-    metric: "+400% Revenue",
-    image:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=150&h=150&fit=crop&crop=faces",
+    stat: "+420% launch revenue",
+    quote: "How we rebuilt her chat scripts and pricing ladder so every fan felt VIP.",
+    embedUrl: "https://streamable.com/e/yeq6ji?autoplay=1",
+    aspectPadding: "177.778%",
+    length: "1:08",
   },
   {
-    quote:
-      "I was drowning in DMs. The team took over my chats 24/7, and my conversion rate doubled. I finally have time to actually create content.",
-    name: "Chloe V.",
-    role: "Rising Star",
-    metric: "20hrs Saved/Wk",
-    image:
-      "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150&h=150&fit=crop&crop=faces",
+    creator: "Mara V.",
+    role: "chat-first brand",
+    stat: "+38% avg order value",
+    quote: "Daily reports, proactive upsells, and the calm confidence of a 24/7 team.",
+    embedUrl: "https://streamable.com/e/4d0v31?autoplay=1",
+    aspectPadding: "179.272%",
+    length: "0:52",
   },
   {
-    quote:
-      "Professional, transparent, and they actually care. My old agency treated me like a number. OnlyModels treats me like a partner.",
-    name: "Jessica M.",
-    role: "Top 1% Creator",
-    metric: "98% Retention",
-    image:
-      "https://images.unsplash.com/photo-1517841905240-472988babdf9?w=150&h=150&fit=crop&crop=faces",
-  },
-  {
-    quote:
-      "Started from zero. They guided me on branding, socials, and content. Hit top 5% in my first two months. Insane growth.",
-    name: "Bella R.",
-    role: "New Creator",
-    metric: "0 to Top 5%",
-    image:
-      "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=150&h=150&fit=crop&crop=faces",
-  },
-  {
-    quote:
-      "The daily reports are a game changer. I know exactly what's working. My revenue per sub is up 40% since joining.",
-    name: "Elena K.",
-    role: "VIP Model",
-    metric: "+40% LTV",
-    image:
-      "https://images.unsplash.com/photo-1529626455594-4ff0802cfb7e?w=150&h=150&fit=crop&crop=faces",
-  },
-  {
-    quote:
-      "I thought I could do it all myself. I was wrong. Handing over the backend to OnlyModels was the best business decision I ever made.",
-    name: "Daniella S.",
-    role: "Top 0.1% Creator",
-    metric: "$50k+ Month",
-    image:
-      "https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=150&h=150&fit=crop&crop=faces",
+    creator: "Nyx Collective",
+    role: "3 creator studio",
+    stat: "0 ➜ Top 3% in 60 days",
+    quote: "How a multi-creator roster scaled once the backend, compliance, and growth stack were aligned.",
+    embedUrl: "https://streamable.com/e/hl4732?autoplay=1",
+    aspectPadding: "177.778%",
+    length: "1:32",
   },
 ];
-
-const ROTATION_PER_CARD = 360 / testimonials.length;
 
 const credibilityHighlights = [
   {
@@ -98,12 +64,10 @@ const credibilityHighlights = [
 
 export function TestimonialsSection() {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [rotation, setRotation] = useState(0);
-  const [isHovering, setIsHovering] = useState(false);
-  const [cardDepth, setCardDepth] = useState(520);
   const containerRef = useRef<HTMLElement | null>(null);
-  const sliderRef = useRef<HTMLDivElement | null>(null);
-  const isInView = useInView(containerRef, { once: true, amount: 0.1 });
+  const videoContainerRef = useRef<HTMLDivElement | null>(null);
+  const isVideoInView = useFramerInView(videoContainerRef, { amount: 0.5 });
+  const isInView = useInView(containerRef, { once: true, amount: 0.2 });
   const controls = useAnimation();
 
   useEffect(() => {
@@ -111,95 +75,6 @@ export function TestimonialsSection() {
       controls.start("visible");
     }
   }, [controls, isInView]);
-
-  const moveBy = useCallback((step: number) => {
-    setActiveIndex((prev) => (prev + step + testimonials.length) % testimonials.length);
-    setRotation((prev) => prev - step * ROTATION_PER_CARD);
-  }, []);
-
-  const handlePrevious = useCallback(() => {
-    moveBy(-1);
-  }, [moveBy]);
-
-  const handleNext = useCallback(() => {
-    moveBy(1);
-  }, [moveBy]);
-
-  const handleDotClick = useCallback(
-    (targetIndex: number) => {
-      if (targetIndex === activeIndex) {
-        return;
-      }
-      let delta = targetIndex - activeIndex;
-      const half = testimonials.length / 2;
-      if (delta > half) {
-        delta -= testimonials.length;
-      } else if (delta < -half) {
-        delta += testimonials.length;
-      }
-      moveBy(delta);
-    },
-    [activeIndex, moveBy]
-  );
-
-  useEffect(() => {
-    if (isHovering) {
-      return;
-    }
-
-    const timer = setInterval(() => {
-      moveBy(1);
-    }, 6000);
-
-    return () => clearInterval(timer);
-  }, [isHovering, moveBy]);
-
-  useEffect(() => {
-    const updateDepth = () => {
-      if (typeof window === "undefined") return;
-      setCardDepth(window.innerWidth < 768 ? 320 : 520);
-    };
-    updateDepth();
-    window.addEventListener("resize", updateDepth);
-    return () => window.removeEventListener("resize", updateDepth);
-  }, []);
-
-  // Touch swipe handlers for mobile
-  const [touchStart, setTouchStart] = useState<number | null>(null);
-  const [touchEnd, setTouchEnd] = useState<number | null>(null);
-
-  const minSwipeDistance = 50;
-
-  const onTouchStart = (e: React.TouchEvent) => {
-    setTouchEnd(null);
-    setTouchStart(e.targetTouches[0].clientX);
-  };
-
-  const onTouchMove = (e: React.TouchEvent) => {
-    setTouchEnd(e.targetTouches[0].clientX);
-  };
-
-  const onTouchEnd = () => {
-    if (!touchStart || !touchEnd) {
-      setTouchStart(null);
-      setTouchEnd(null);
-      return;
-    }
-
-    const distance = touchStart - touchEnd;
-    const isLeftSwipe = distance > minSwipeDistance;
-    const isRightSwipe = distance < -minSwipeDistance;
-
-    if (isLeftSwipe) {
-      handleNext();
-    } else if (isRightSwipe) {
-      handlePrevious();
-    }
-
-    // Reset touch state
-    setTouchStart(null);
-    setTouchEnd(null);
-  };
 
   const headlineVariants = {
     hidden: { opacity: 0, y: 16 },
@@ -278,127 +153,90 @@ export function TestimonialsSection() {
           })}
         </motion.div>
 
-        <div className="testimonials-shell relative mx-auto max-w-4xl rounded-[3rem] border border-white/10 bg-gradient-to-b from-background/70 via-background/50 to-background/70 p-8 shadow-2xl shadow-black/30 backdrop-blur">
-          <div
-            ref={sliderRef}
-            className="relative mx-auto max-w-3xl"
-            onMouseEnter={() => setIsHovering(true)}
-            onMouseLeave={() => setIsHovering(false)}
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
-          >
-            <div className="mb-10 text-center">
-              <p className="text-xs font-semibold uppercase tracking-[0.4em] text-foreground/40">
-                Orbiting testimonials
-              </p>
-              <div className="mt-3 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-sm text-foreground/80">
-                <Quote className="h-4 w-4 text-accent" />
-                Swipe or wait for the rotation
+        <div className="testimonials-shell relative mx-auto max-w-5xl rounded-[2.5rem] border border-white/10 bg-gradient-to-b from-background/80 via-background/50 to-background/80 p-6 shadow-2xl shadow-black/40 backdrop-blur">
+          <div className="grid gap-8 lg:grid-cols-[1.2fr,0.85fr]">
+            <motion.div
+              initial={{ opacity: 0, y: 32 }}
+              animate={controls}
+              variants={{ visible: { opacity: 1, y: 0, transition: { duration: 0.6 } } }}
+              className="group relative overflow-hidden rounded-[28px] border border-white/10 bg-white/70 p-4 shadow-[0_25px_80px_rgba(15,15,20,0.25)] dark:bg-white/5"
+            >
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-accent/10 via-transparent to-accent-secondary/20 opacity-60" />
+              <div className="relative flex flex-col gap-1 pb-4 text-xs font-semibold uppercase tracking-[0.35em] text-foreground/50">
+                <span>Creator voice memo</span>
               </div>
-            </div>
-
-            <div className="relative min-h-[320px] overflow-visible md:min-h-[420px]" style={{ perspective: "1600px" }}>
-              <motion.div
-                className="relative h-[320px] w-full md:h-[420px] will-change-transform"
-                style={{ transformStyle: "preserve-3d" }}
-                initial={{ opacity: 0, scale: 0.5, rotateY: 180 }}
-                animate={isInView ? { opacity: 1, scale: 1, rotateY: rotation } : {}}
-                transition={{
-                  opacity: { duration: 0.8 },
-                  scale: { type: "spring", stiffness: 60, damping: 15, delay: 0.2 },
-                  rotateY: { type: "spring", stiffness: 120, damping: 28 } // Keep existing rotation spring
-                }}
-              >
-                {testimonials.map((testimonial, index) => {
-                  const angle = ROTATION_PER_CARD * index;
-                  const isActive = index === activeIndex;
-                  return (
-                    <div
-                      key={testimonial.name}
-                      className="testimonial-card absolute left-1/2 top-1/2 w-full max-w-[280px] -translate-x-1/2 -translate-y-1/2 rounded-[20px] border border-white/10 bg-gradient-to-b from-white/10 to-white/5 p-4 shadow-2xl shadow-black/40 backdrop-blur md:max-w-sm md:rounded-[28px] md:p-6"
-                      style={{
-                        transform: `rotateY(${angle}deg) translateZ(${cardDepth}px)`,
-                        opacity: isActive ? 1 : 0.25,
-                        pointerEvents: isActive ? "auto" : "none",
-                        filter: isActive ? "none" : "blur(1px)",
-                        boxShadow: isActive
-                          ? "0 20px 80px rgba(0,0,0,0.45)"
-                          : "0 10px 30px rgba(0,0,0,0.25)",
-                      }}
-                    >
-                      <div className="flex items-center justify-between text-xs uppercase tracking-[0.4em] text-foreground/40">
-                        <span>Creator story</span>
-                        <span>{testimonial.metric}</span>
-                      </div>
-                      <p className="mt-4 text-base leading-relaxed text-foreground md:mt-6 md:text-lg">
-                        &ldquo;{testimonial.quote}&rdquo;
-                      </p>
-                      <div className="mt-6 flex items-center justify-between gap-4 md:mt-8 md:gap-6">
-                        <div className="flex items-center gap-4">
-                          <img
-                            src={testimonial.image}
-                            alt={testimonial.name}
-                            className="h-10 w-10 rounded-full border border-white/20 object-cover md:h-14 md:w-14"
-                          />
-                          <div>
-                            <p className="text-sm font-semibold text-foreground md:text-base">{testimonial.name}</p>
-                            <p className="text-xs text-muted-foreground md:text-sm">{testimonial.role}</p>
-                          </div>
-                        </div>
-                        <div className="rounded-xl border border-accent/30 bg-accent/10 px-3 py-1.5 text-right text-[10px] font-semibold uppercase tracking-[0.2em] text-accent md:rounded-2xl md:px-4 md:py-2 md:text-xs">
-                          {isActive ? "Live scaling" : "Queued"}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </motion.div>
-            </div>
-
-            <div className="mt-12 flex flex-col items-center gap-6">
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  aria-label="Show previous testimonial"
-                  onClick={handlePrevious}
-                  className="rounded-full border border-white/10 bg-white/5 p-3 text-foreground transition hover:bg-white/10 cursor-pointer"
-                >
-                  <ChevronLeft className="h-5 w-5" />
-                </button>
-                <button
-                  type="button"
-                  aria-label="Show next testimonial"
-                  onClick={handleNext}
-                  className="rounded-full border border-white/10 bg-white/5 p-3 text-foreground transition hover:bg-white/10 cursor-pointer"
-                >
-                  <ChevronRight className="h-5 w-5" />
-                </button>
-              </div>
-              <div className="flex flex-wrap justify-center gap-3">
-                {testimonials.map((testimonial, index) => {
-                  const isActive = index === activeIndex;
-                  return (
-                    <button
-                      key={testimonial.name}
-                      type="button"
-                      aria-label={`Show testimonial from ${testimonial.name}`}
-                      onClick={() => handleDotClick(index)}
-                      className={`testimonial-dot group flex items-center gap-2 rounded-full border transition ${isActive
-                        ? "border-accent bg-accent/15 text-foreground"
-                        : "border-white/10 bg-white/5 text-foreground/60 hover:border-white/30 hover:text-foreground"
-                        } px-2 py-2 md:px-4 md:py-1.5`}
-                    >
-                      <span
-                        className={`h-2 w-2 rounded-full transition ${isActive ? "scale-125 bg-accent" : "bg-white/30 group-hover:bg-white/50"
-                          }`}
+              <div className="relative mx-auto w-full max-w-[330px] overflow-hidden rounded-[34px] border border-white/15 bg-black/70 shadow-[0_20px_60px_rgba(14,14,20,0.35)] sm:max-w-[360px]">
+                <div className="absolute -inset-2 rounded-[40px] bg-gradient-to-tr from-accent/30 via-transparent to-accent-secondary/30 opacity-60 blur-2xl" />
+                <div ref={videoContainerRef} className="relative rounded-[34px] border border-white/15 bg-black/80">
+                  <div
+                    className="relative w-full"
+                    style={{ paddingBottom: videoTestimonials[activeIndex].aspectPadding }}
+                  >
+                    {isVideoInView && (
+                      <iframe
+                        key={videoTestimonials[activeIndex].embedUrl}
+                        src={videoTestimonials[activeIndex].embedUrl}
+                        allow="fullscreen;autoplay"
+                        allowFullScreen
+                        className="absolute left-0 top-0 h-full w-full rounded-[34px] border-0"
+                        title={`${videoTestimonials[activeIndex].creator} testimonial`}
                       />
-                      <span className="hidden text-xs font-semibold uppercase tracking-[0.25em] tracking-normal normal-case md:inline">{testimonial.name}</span>
-                    </button>
-                  );
-                })}
+                    )}
+                  </div>
+                </div>
               </div>
-            </div>
+              <div className="relative mt-6 flex flex-col gap-4">
+                <div className="flex flex-wrap items-center justify-between gap-4">
+                  <div>
+                    <p className="text-lg font-semibold text-foreground">{videoTestimonials[activeIndex].creator}</p>
+                    <p className="text-sm uppercase tracking-[0.35em] text-muted-foreground">
+                      {videoTestimonials[activeIndex].role}
+                    </p>
+                  </div>
+                  <div className="rounded-full border border-accent/40 bg-accent/10 px-4 py-2 text-xs font-semibold uppercase tracking-[0.35em] text-accent">
+                    {videoTestimonials[activeIndex].stat}
+                  </div>
+                </div>
+                <p className="text-base leading-relaxed text-muted-foreground">
+                  {videoTestimonials[activeIndex].quote}
+                </p>
+              </div>
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 32 }}
+              animate={controls}
+              variants={{ visible: { opacity: 1, y: 0, transition: { duration: 0.6, delay: 0.2 } } }}
+              className="flex flex-col gap-4"
+            >
+              {videoTestimonials.map((item, index) => {
+                const isActive = index === activeIndex;
+                return (
+                  <button
+                    key={item.creator}
+                    type="button"
+                    onClick={() => setActiveIndex(index)}
+                    className={`video-testimonial-pill relative flex items-center gap-4 rounded-2xl border px-4 py-4 text-left transition focus:outline-none focus-visible:ring-2 focus-visible:ring-accent ${isActive
+                        ? "border-accent/40 bg-accent/10 shadow-[0_20px_60px_rgba(236,72,153,0.25)] text-foreground"
+                        : "border-white/10 bg-white/5 text-foreground/80 hover:border-white/20 dark:bg-white/5"
+                      }`}
+                    aria-pressed={isActive}
+                  >
+                    <div className={`flex h-12 w-12 items-center justify-center rounded-2xl border ${isActive ? "border-accent/40 bg-accent/20 text-accent" : "border-white/10 bg-white/5 text-white/70"}`}>
+                      <Play className="h-4 w-4" />
+                    </div>
+                    <div className="flex flex-1 flex-col">
+                      <p className="text-sm font-semibold">{item.creator}</p>
+                      <p className="text-xs uppercase tracking-[0.35em] text-muted-foreground">{item.role}</p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-semibold text-accent">{item.stat}</p>
+                      <p className="text-[11px] uppercase tracking-[0.35em] text-muted-foreground">{item.length}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </motion.div>
           </div>
         </div>
       </div>
