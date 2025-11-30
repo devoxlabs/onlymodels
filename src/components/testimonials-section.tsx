@@ -27,7 +27,7 @@ const videoTestimonials: VideoTestimonial[] = [
     durationMs: 68000,
   },
   {
-    creator: "Lena F.",
+    creator: "Ana",
     role: "chat-first brand",
     stat: "+38% avg order value",
     quote: "Daily reports, proactive upsells, and the calm confidence of a 24/7 team.",
