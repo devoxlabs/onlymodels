@@ -9,7 +9,6 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
       duration: 1.1,
       lerp: 0.1,
       smoothWheel: true,
-      smoothTouch: false,
       touchMultiplier: 1.6,
       wheelMultiplier: 1,
     });
